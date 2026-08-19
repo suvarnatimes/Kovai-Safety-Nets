@@ -8,8 +8,9 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Allow access to login page
-        if (req.nextUrl.pathname === "/admin/login") {
+        const { pathname } = req.nextUrl;
+        // Allow access to login page regardless of trailing slash or query params
+        if (pathname.startsWith("/admin/login")) {
           return true;
         }
         // Require valid token for all other /admin routes

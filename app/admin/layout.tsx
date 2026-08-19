@@ -10,7 +10,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { data: session } = useSession();
 
   // If on login page, don't show the admin dashboard shell
-  if (pathname === "/admin/login") {
+  if (pathname?.startsWith("/admin/login")) {
     return <>{children}</>;
   }
 
