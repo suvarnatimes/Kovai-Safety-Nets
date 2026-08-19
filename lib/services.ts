@@ -363,87 +363,86 @@ export const SERVICES: Service[] = [
     ],
   },
   {
-    slug: "industrial-safety-nets",
-    title: "Industrial Safety Nets",
-    shortTitle: "Industrial Nets",
-    tagline: "Fall protection for construction and industrial sites",
+    slug: "sports-safety-nets",
+    title: "Sports Safety Nets",
+    shortTitle: "Sports Nets",
+    tagline: "High-impact protection nets for sports grounds, courts & turfs",
     description:
-      "Heavy-duty safety nets for construction sites, warehouses, factories, and industrial buildings to protect workers from fall hazards.",
+      "Heavy-duty HDPE nylon sports safety nets for cricket practice nets, football turfs, volleyball courts, and sports complexes across Coimbatore.",
     longDescription:
-      "Industrial safety nets are a critical component of fall protection systems at construction sites, warehouses, and factories. Kovai Safety Nets supplies and installs EN 1263-certified safety nets for construction sites and custom-engineered nets for warehouses, sky-lights, and elevated working platforms. Our industrial nets are rated for personnel fall arrest (3 m fall clearance, 100 kN energy absorption) and comply with IS 11057 and NBC Part 7 requirements.",
+      "Sports safety nets are essential for sports complexes, box cricket turfs, schools, colleges, and residential compounds in Coimbatore. Kovai Safety Nets provides custom-fitted, high-tensile sports netting systems designed to withstand powerful impacts from cricket balls, footballs, and tennis balls. Our nets prevent balls from straying into adjacent properties, roads, or windows, ensuring non-stop play and peace of mind. We offer UV-stabilised HDPE nets with reinforced border ropes, installed on robust galvanised steel pipe structures.",
     benefits: [
-      "EN 1263 and IS 11057 compliant safety nets",
-      "Personnel fall arrest rated — tested to 100 kN",
-      "Fast installation by trained riggers",
-      "Reduces insurance premiums with documented safety compliance",
-      "Protects workers and tools from falls",
-      "Can span large unsupported spans",
-      "Reusable — can be relocated as construction progresses",
+      "High impact resistance for cricket, football, and tennis",
+      "UV-stabilised HDPE nets designed for outdoor weather",
+      "Custom mesh sizes (25mm to 100mm) for different sports",
+      "Heavy-duty galvanised steel frame & wire rope tensioning",
+      "Protects surrounding vehicles, windows, and spectators",
+      "Ideal for Box Cricket, Turf grounds, Schools & Apartment courts",
+      "3-Year UV Manufacturer Warranty",
     ],
     materials: [
       {
-        name: "Polypropylene (PP) Net",
-        detail:
-          "High-tenacity PP, 100 mm mesh, 4 mm knotted rope — IS 11057 grade",
+        name: "High-Tenacity HDPE Net",
+        detail: "UV-stabilised braided nylon/HDPE netting, 2 mm – 4 mm twine thickness",
       },
       {
-        name: "Steel Safety Cables",
-        detail:
-          "12 mm wire rope perimeter rope for frame — load-tested to 150 kN",
+        name: "Galvanised Steel Pole Structure",
+        detail: "GI pipes & powder-coated frame posts engineered for high wind loads",
       },
       {
-        name: "Scaffold Tube Brackets",
-        detail: "Hot-dip galvanised scaffold brackets for quick system-net connection",
+        name: "SS Wire Rope & Turnbuckles",
+        detail: "Stainless steel border wire rope with turnbuckles for tight tensioning",
       },
     ],
     installationSteps: [
       {
-        step: "Risk Assessment",
+        step: "Court Survey & Design",
         detail:
-          "Site walk-through to identify fall hazard areas and calculate net system dimensions.",
+          "Precise measurement of court length, width, and height requirements.",
       },
       {
-        step: "Anchor Point Design",
+        step: "Frame & Pole Fixing",
         detail:
-          "Engineer-certified anchor points calculated for fall loads and installed by riggers.",
+          "Galvanised steel poles anchored to concrete base foundations.",
       },
       {
-        step: "Net Deployment",
+        step: "Wire Cable Tensioning",
         detail:
-          "Safety net panels are joined, edge-rope threaded, and tensioned across anchor points.",
+          "Perimeter wire ropes threaded and tensioned with heavy-duty turnbuckles.",
       },
       {
-        step: "Pre-Use Inspection",
+        step: "Net Fitting & Handover",
         detail:
-          "Inspection certificate issued before site operatives work above the net.",
+          "Sports net panels laced tightly to perimeter frame; impact pull test conducted.",
       },
     ],
     faqs: [
       {
-        question: "What standards do your industrial safety nets meet?",
+        question: "Can sports nets withstand hard cricket ball impacts?",
         answer:
-          "Our nets comply with EN 1263-1 (European standard for safety nets) and IS 11057 (Indian standard). Installation follows NBC Part 7 fall protection guidelines.",
+          "Yes. Our cricket practice nets use high-density braided HDPE twines engineered to absorb hard leather ball impacts without tearing.",
       },
       {
-        question: "How often should industrial safety nets be inspected?",
+        question: "What mesh sizes are available for different sports?",
         answer:
-          "Safety nets should be visually inspected before each shift and formally inspected weekly by a competent person. We offer on-site inspection services.",
+          "We supply 25–40 mm mesh for cricket & golf practice, 50 mm for tennis/volleyball, and 80–100 mm mesh for football turfs.",
       },
       {
-        question: "Can you supply nets for high-rise construction sites?",
+        question: "Do you install sports nets for apartment sports courts?",
         answer:
-          "Yes. We have experience installing and managing safety net systems on high-rise projects in Coimbatore and nearby districts.",
+          "Yes. We regularly install sports perimeter nets for apartment complexes, gated communities, and box cricket turfs across Coimbatore.",
       },
     ],
-    image: "/images/services/industrial-safety-nets.webp",
-    icon: "🏗️",
-    metaTitle: "Industrial Safety Nets Coimbatore | Construction Fall Protection",
+    image: "/images/services/sports-safety-nets.webp",
+    icon: "⚽",
+    metaTitle: "Sports Safety Nets Coimbatore | Cricket Practice & Turf Nets",
     metaDescription:
-      "EN 1263-certified industrial safety nets for construction sites and factories in Coimbatore. Fall protection, IS 11057 compliant. Call 7708414857.",
+      "High quality sports safety nets in Coimbatore for cricket practice, football turfs, and sports courts. UV-stabilised HDPE nets. Call 7708414857 for free quote.",
     keywords: [
-      "industrial safety nets Coimbatore",
-      "construction safety nets",
-      "fall protection nets",
+      "sports safety nets Coimbatore",
+      "cricket practice nets Coimbatore",
+      "turf safety nets",
+      "sports ground nets",
     ],
   },
   {
