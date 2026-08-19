@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { SERVICES } from "@/lib/services";
-import { SITE_URL } from "@/lib/constants";
+import { SITE_URL, PHONE_URL, WHATSAPP_URL } from "@/lib/constants";
 import BreadcrumbNav from "@/components/ui/BreadcrumbNav";
 
 export const metadata: Metadata = {
@@ -13,7 +13,6 @@ export const metadata: Metadata = {
 };
 
 export default function GalleryPage() {
-  // Build a flat gallery items list from all services
   const galleryItems = SERVICES.flatMap((service) =>
     [1, 2, 3].map((n) => ({
       id: `${service.slug}-${n}`,
@@ -27,32 +26,32 @@ export default function GalleryPage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="gradient-hero text-white py-16 md:py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero (DARK) */}
+      <section data-theme="dark" className="section-dark relative overflow-hidden -mt-24 pt-32 md:pt-40 pb-16">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <BreadcrumbNav
             items={[
               { label: "Home", href: "/" },
               { label: "Gallery", href: "/gallery/" },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-extrabold mt-6 mb-4">
+          <h1 className="headline-display text-white mt-6 mb-4">
             Our Work Gallery
           </h1>
-          <p className="text-xl text-blue-100 max-w-2xl">
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl">
             Browse real installations by Kovai Safety Nets across Coimbatore homes, apartments, and businesses.
           </p>
         </div>
       </section>
 
-      {/* Filter Buttons (progressive enhancement — works without JS as static list) */}
-      <section className="py-8 bg-white border-b border-gray-100">
+      {/* Filter Buttons (LIGHT) */}
+      <section data-theme="light" className="section-light py-8 border-b border-black/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-sm font-semibold text-gray-500 mr-2">Filter by:</span>
+            <span className="text-xs font-bold uppercase text-slate-500 mr-2 tracking-wider">Filter by:</span>
             <Link
               href="/gallery/"
-              className="badge-orange text-sm px-4 py-2"
+              className="pill-badge-dark text-xs"
             >
               All Services
             </Link>
@@ -60,29 +59,23 @@ export default function GalleryPage() {
               <Link
                 key={service.slug}
                 href={`/services/${service.slug}/`}
-                className="badge badge-blue text-sm px-4 py-2 hover:bg-blue-200 transition-colors"
+                className="pill-badge-light text-xs hover:border-slate-800 transition-colors"
               >
                 {service.icon} {service.shortTitle}
               </Link>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3">
-            Click any service name to see its dedicated page with installation details and more photos.
-          </p>
         </div>
       </section>
 
-      {/* Gallery Grid */}
-      <section
-        className="py-12 bg-white"
-        aria-label="Gallery of safety net installations"
-      >
+      {/* Gallery Grid (LIGHT) */}
+      <section data-theme="light" className="section-light py-16" aria-label="Gallery of safety net installations">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
             {galleryItems.map((item) => (
               <div
                 key={item.id}
-                className="break-inside-avoid rounded-2xl overflow-hidden shadow-card group relative"
+                className="break-inside-avoid rounded-[22px] overflow-hidden shadow-md group relative border border-black/5"
               >
                 <Image
                   src={item.src}
@@ -90,16 +83,16 @@ export default function GalleryPage() {
                   width={400}
                   height={300}
                   loading="lazy"
-                  className="w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                   <div>
-                    <p className="text-white text-xs font-semibold">
+                    <p className="text-white text-xs font-bold mb-1">
                       {item.icon} {item.serviceTitle}
                     </p>
                     <Link
                       href={`/services/${item.serviceSlug}/`}
-                      className="text-orange-400 text-xs hover:underline"
+                      className="text-orange-400 text-xs font-semibold hover:underline"
                     >
                       View Service →
                     </Link>
@@ -111,26 +104,26 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-12 bg-brand-light text-center">
+      {/* CTA (DARK) */}
+      <section data-theme="dark" className="section-dark py-16 text-center">
         <div className="max-w-xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-brand-navy mb-3">
+          <h2 className="headline-section text-white mb-3">
             Want a Similar Installation?
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-slate-300 mb-6 text-sm sm:text-base">
             Call us for a free site visit and quote across Coimbatore.
           </p>
-          <div className="flex gap-4 justify-center">
-            <a href={`tel:7708414857`} className="btn-primary">
+          <div className="flex flex-wrap gap-4 justify-center">
+            <a href={PHONE_URL} className="btn-primary-dark text-xs sm:text-sm">
               📞 Call Now
             </a>
             <a
-              href={`https://wa.me/917708414857?text=${encodeURIComponent("Hi! I saw your gallery and I'm interested in safety net installation.")}`}
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-whatsapp"
+              className="btn-secondary-dark text-xs sm:text-sm"
             >
-              💬 WhatsApp
+              💬 WhatsApp Us
             </a>
           </div>
         </div>

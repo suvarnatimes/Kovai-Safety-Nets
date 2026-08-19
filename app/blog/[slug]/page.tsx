@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_URL, BUSINESS } from "@/lib/constants";
+import { SITE_URL, BUSINESS, PHONE_URL, WHATSAPP_URL } from "@/lib/constants";
 import BreadcrumbNav from "@/components/ui/BreadcrumbNav";
 
 // Blog post data — replace with CMS fetch in production
@@ -132,9 +132,9 @@ export default async function BlogPostPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      {/* Hero */}
-      <section className="gradient-hero text-white py-16 md:py-20">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero (DARK) */}
+      <section data-theme="dark" className="section-dark relative overflow-hidden -mt-24 pt-32 md:pt-40 pb-16">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <BreadcrumbNav
             items={[
               { label: "Home", href: "/" },
@@ -142,16 +142,16 @@ export default async function BlogPostPage({
               { label: title, href: `/blog/${slug}/` },
             ]}
           />
-          <div className="flex items-center gap-2 mt-6 mb-4">
-            <span className="badge bg-orange-500/20 text-orange-300 border border-orange-400/30">
+          <div className="flex items-center gap-3 mt-6 mb-4">
+            <span className="pill-badge-dark text-xs" style={{ color: "var(--accent)" }}>
               {category}
             </span>
-            <span className="text-blue-300 text-sm">{readTime}</span>
+            <span className="text-slate-300 text-xs font-semibold">{readTime}</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">
+          <h1 className="headline-display text-white mb-4">
             {title}
           </h1>
-          <div className="flex items-center gap-3 text-blue-300 text-sm">
+          <div className="flex items-center gap-3 text-slate-300 text-xs sm:text-sm">
             <span>✍️ {author}</span>
             <span>·</span>
             <time dateTime={date}>
@@ -165,57 +165,56 @@ export default async function BlogPostPage({
         </div>
       </section>
 
-      {/* Content */}
-      <article className="py-16 bg-white">
+      {/* Content (LIGHT) */}
+      <article data-theme="light" className="section-light py-16" style={{ color: "#14161a" }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="prose prose-lg max-w-none prose-headings:text-brand-navy prose-a:text-orange-500">
+          <div className="prose prose-lg max-w-none text-slate-800">
             {content.map((block, i) => {
               if (block.startsWith("## ")) {
                 return (
-                  <h2 key={i} className="text-2xl font-bold text-brand-navy mt-10 mb-4">
+                  <h2 key={i} className="text-2xl font-bold mt-10 mb-4 tracking-tight" style={{ color: "#14161a", fontFamily: "var(--font-display)" }}>
                     {block.replace("## ", "")}
                   </h2>
                 );
               }
               return (
-                <p key={i} className="text-gray-700 leading-relaxed mb-5">
+                <p key={i} className="text-slate-700 leading-relaxed mb-6 text-base md:text-lg">
                   {block}
                 </p>
               );
             })}
           </div>
 
-          {/* CTA */}
-          <div className="mt-12 p-6 bg-brand-light rounded-3xl border border-orange-100">
-            <h3 className="text-xl font-bold text-brand-navy mb-2">
+          {/* CTA Box */}
+          <div className="mt-12 p-8 glass-card-light rounded-[24px]">
+            <h3 className="text-xl font-bold mb-2" style={{ color: "#14161a" }}>
               Need expert help? We&apos;re a call away.
             </h3>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-slate-600 text-sm mb-6">
               Kovai Safety Nets provides free site visits and quotes across Coimbatore. Same-day service available.
             </p>
-            <div className="flex gap-3">
-              <a href={`tel:${BUSINESS.phone}`} className="btn-primary text-sm">
+            <div className="flex flex-wrap gap-3">
+              <a href={PHONE_URL} className="btn-primary-light text-xs sm:text-sm">
                 📞 Call {BUSINESS.phone}
               </a>
               <a
-                href={`https://wa.me/${BUSINESS.whatsappNumber}`}
+                href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-whatsapp text-sm"
+                className="btn-secondary-light text-xs sm:text-sm"
               >
-                💬 WhatsApp
+                💬 WhatsApp Us
               </a>
             </div>
           </div>
+
+          <div className="mt-10 text-center">
+            <Link href="/blog/" className="btn-secondary-light">
+              ← Back to Blog
+            </Link>
+          </div>
         </div>
       </article>
-
-      {/* Back to blog */}
-      <div className="py-8 bg-brand-light text-center">
-        <Link href="/blog/" className="btn-secondary inline-flex">
-          ← Back to Blog
-        </Link>
-      </div>
     </>
   );
 }

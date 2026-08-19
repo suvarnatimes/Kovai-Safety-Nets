@@ -117,42 +117,42 @@ export default function TestimonialsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewSchema) }}
       />
 
-      {/* Hero */}
-      <section className="gradient-hero text-white py-16 md:py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero (DARK) */}
+      <section data-theme="dark" className="section-dark relative overflow-hidden -mt-24 pt-32 md:pt-40 pb-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <BreadcrumbNav
             items={[
               { label: "Home", href: "/" },
               { label: "Reviews", href: "/testimonials/" },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-extrabold mt-6 mb-4">
+          <h1 className="headline-display text-white mt-6 mb-4">
             Customer Reviews
           </h1>
-          <p className="text-xl text-blue-100 max-w-2xl mb-6">
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mb-6">
             Real reviews from our customers across Coimbatore.
           </p>
           {/* Aggregate rating */}
-          <div className="inline-flex items-center gap-3 bg-white/10 rounded-2xl px-6 py-3">
-            <div className="text-4xl font-black text-yellow-400">4.9</div>
+          <div className="inline-flex items-center gap-3 glass-card-dark px-6 py-3 rounded-2xl">
+            <div className="text-4xl font-black text-amber-400">4.9</div>
             <div>
-              <div className="flex gap-1 text-yellow-400 text-lg" aria-label="4.9 out of 5 stars">
+              <div className="flex gap-1 text-amber-400 text-lg" aria-label="4.9 out of 5 stars">
                 {[1,2,3,4,5].map(i => <span key={i} aria-hidden="true">★</span>)}
               </div>
-              <p className="text-blue-200 text-sm">Based on {TESTIMONIALS.length}+ verified reviews</p>
+              <p className="text-slate-300 text-xs sm:text-sm">Based on {TESTIMONIALS.length}+ verified reviews</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Reviews Grid */}
-      <section className="py-20 bg-white" aria-label="Customer testimonials">
+      {/* Reviews Grid (LIGHT) */}
+      <section data-theme="light" className="section-light py-20" aria-label="Customer testimonials">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger">
             {TESTIMONIALS.map((t) => (
               <article
                 key={t.name}
-                className="card p-6 flex flex-col gap-3"
+                className="glass-card-light p-6 flex flex-col gap-3 rounded-[24px]"
                 itemScope
                 itemType="https://schema.org/Review"
               >
@@ -160,21 +160,21 @@ export default function TestimonialsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1">
                     {Array.from({ length: t.rating }).map((_, i) => (
-                      <span key={i} className="text-yellow-400" aria-hidden="true">★</span>
+                      <span key={i} className="text-amber-500" aria-hidden="true">★</span>
                     ))}
                     <span className="sr-only">{t.rating} out of 5 stars</span>
                   </div>
-                  <span className="badge-orange text-xs">{t.service}</span>
+                  <span className="pill-badge-light text-xs" style={{ color: "var(--accent)" }}>{t.service}</span>
                 </div>
-                <p className="text-gray-700 italic text-sm leading-relaxed flex-1">
+                <p className="text-slate-700 italic text-sm leading-relaxed flex-1">
                   &ldquo;{t.text}&rdquo;
                 </p>
-                <div className="border-t border-gray-100 pt-3 flex items-center justify-between">
+                <div className="border-t border-black/5 pt-3 flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-brand-navy text-sm" itemProp="author">{t.name}</p>
-                    <p className="text-xs text-gray-500">{t.location}</p>
+                    <p className="font-bold text-sm" style={{ color: "#14161a" }} itemProp="author">{t.name}</p>
+                    <p className="text-xs text-slate-500">{t.location}</p>
                   </div>
-                  <time className="text-xs text-gray-400" dateTime={t.date}>{t.date}</time>
+                  <time className="text-xs text-slate-400" dateTime={t.date}>{t.date}</time>
                 </div>
               </article>
             ))}
@@ -182,24 +182,24 @@ export default function TestimonialsPage() {
         </div>
       </section>
 
-      {/* Google Reviews Embed */}
-      <section className="py-16 gradient-section" aria-labelledby="google-reviews-heading">
+      {/* Google Reviews Embed (LIGHT) */}
+      <section data-theme="light" className="section-light py-16 border-t border-black/5" aria-labelledby="google-reviews-heading">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <h2 id="google-reviews-heading" className="section-heading mb-4">
+          <h2 id="google-reviews-heading" className="headline-section mb-4" style={{ color: "#14161a" }}>
             Find Us on Google
           </h2>
-          <p className="text-gray-600 mb-8">
+          <p className="text-slate-600 mb-8 text-sm sm:text-base">
             Leave us a review on Google — your feedback helps families in Coimbatore make safer choices.
           </p>
-          <div className="bg-white rounded-3xl p-8 shadow-card">
-            <div className="text-5xl mb-4">⭐</div>
-            <p className="text-2xl font-black text-brand-navy mb-1">4.9 / 5</p>
-            <p className="text-gray-500 mb-6">on Google Reviews</p>
+          <div className="glass-card-light rounded-[28px] p-8">
+            <div className="text-5xl mb-3">⭐</div>
+            <p className="text-3xl font-black mb-1" style={{ color: "#14161a" }}>4.9 / 5</p>
+            <p className="text-slate-500 text-sm mb-6">on Google Reviews</p>
             <a
               href="https://www.google.com/search?q=Kovai+Safety+Nets+Coimbatore"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary inline-flex"
+              className="btn-primary-light inline-flex"
             >
               See Our Google Reviews →
             </a>
@@ -207,22 +207,22 @@ export default function TestimonialsPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 bg-white text-center">
+      {/* CTA (DARK) */}
+      <section data-theme="dark" className="section-dark py-16 text-center">
         <div className="max-w-xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-brand-navy mb-3">
+          <h2 className="headline-section text-white mb-3">
             Join 2,000+ Happy Customers
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-slate-300 mb-6 text-sm sm:text-base">
             Call us for a free quote — we&apos;ll add your review to this page after installation!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href={PHONE_URL} className="btn-primary">📞 Call {BUSINESS.phone}</a>
+            <a href={PHONE_URL} className="btn-primary-dark">📞 Call {BUSINESS.phone}</a>
             <a
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-whatsapp"
+              className="btn-secondary-dark"
             >
               💬 WhatsApp Us
             </a>

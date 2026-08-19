@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { BUSINESS, PHONE_URL, WHATSAPP_URL, SITE_URL } from "@/lib/constants";
 import LeadForm from "@/components/ui/LeadForm";
 import BreadcrumbNav from "@/components/ui/BreadcrumbNav";
@@ -19,41 +18,41 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      {/* Header Banner */}
-      <section className="gradient-hero text-white py-16 md:py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header Banner (DARK) */}
+      <section data-theme="dark" className="section-dark relative overflow-hidden -mt-24 pt-32 md:pt-40 pb-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <BreadcrumbNav
             items={[
               { label: "Home", href: "/" },
               { label: "About Us", href: "/about/" },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-extrabold mt-6 mb-4">
+          <h1 className="headline-display text-white mt-6 mb-4">
             About Kovai Safety Nets
           </h1>
-          <p className="text-xl text-blue-100 max-w-2xl">
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl">
             Coimbatore&apos;s trusted safety net installation company since 2015.
           </p>
         </div>
       </section>
 
-      {/* Our Story */}
-      <section className="py-20 bg-white" aria-labelledby="story-heading">
+      {/* Our Story (LIGHT) */}
+      <section data-theme="light" className="section-light py-20" aria-labelledby="story-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-14 items-center">
             <div>
-              <span className="badge-orange mb-3">Our Story</span>
-              <h2 id="story-heading" className="section-heading mt-2 mb-6">
+              <div className="pill-badge-light inline-flex mb-3">Our Story</div>
+              <h2 id="story-heading" className="headline-section mt-2 mb-6" style={{ color: "#14161a" }}>
                 A Decade of Keeping Coimbatore Safe
               </h2>
-              <div className="space-y-4 text-gray-700 leading-relaxed">
+              <div className="space-y-4 text-slate-700 leading-relaxed text-sm sm:text-base">
                 <p>
                   Kovai Safety Nets was founded in 2015 by a team of safety
                   professionals who saw a growing need for reliable, quality
                   safety net installations in Coimbatore. What started as a
                   small operation serving a few apartments in RS Puram has
                   grown into the city&apos;s most trusted safety net company —
-                  with over <strong>2,000 installations</strong> completed across
+                  with over <strong className="text-black">2,000 installations</strong> completed across
                   Coimbatore and surrounding areas.
                 </p>
                 <p>
@@ -74,7 +73,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl overflow-hidden shadow-xl">
+            <div className="rounded-[28px] overflow-hidden shadow-xl border border-black/5">
               <Image
                 src="/images/services/child-safety-nets.webp"
                 alt="Happy child playing safely on a balcony with Kovai Safety Nets installation"
@@ -88,12 +87,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Values */}
-      <section className="py-20 gradient-section" aria-labelledby="values-heading">
+      {/* Values (LIGHT) */}
+      <section data-theme="light" className="section-light py-20 border-t border-black/5" aria-labelledby="values-heading">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="badge-orange mb-3">Our Values</span>
-            <h2 id="values-heading" className="section-heading mt-2">
+            <div className="pill-badge-light inline-flex mb-3">Our Values</div>
+            <h2 id="values-heading" className="headline-section mt-2" style={{ color: "#14161a" }}>
               What We Stand For
             </h2>
           </div>
@@ -130,24 +129,26 @@ export default function AboutPage() {
                 desc: "We use humane, wildlife-safe solutions. Our monkey and bird nets deter — never harm — animals.",
               },
             ].map((v) => (
-              <div key={v.title} className="card p-6">
-                <div className="text-4xl mb-4">{v.icon}</div>
-                <h3 className="text-lg font-bold text-brand-navy mb-2">{v.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{v.desc}</p>
+              <div key={v.title} className="glass-card-light p-7 flex flex-col justify-between">
+                <div>
+                  <div className="text-3xl mb-4">{v.icon}</div>
+                  <h3 className="text-lg font-bold mb-2" style={{ color: "#14161a" }}>{v.title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{v.desc}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Milestones */}
-      <section className="py-20 bg-brand-navy text-white" aria-labelledby="milestones-heading">
+      {/* Milestones (DARK) */}
+      <section data-theme="dark" className="section-dark py-20" aria-labelledby="milestones-heading">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 id="milestones-heading" className="text-3xl font-bold text-white mb-3">
+            <h2 id="milestones-heading" className="headline-section text-white mb-3">
               Our Journey in Numbers
             </h2>
-            <p className="text-blue-300">A decade of growth — driven by customer satisfaction.</p>
+            <p className="text-slate-300">A decade of growth — driven by customer satisfaction.</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center stagger">
             {[
@@ -156,34 +157,34 @@ export default function AboutPage() {
               { value: "4.9 ⭐", label: "Average Customer Rating" },
               { value: "11", label: "Service Types Offered" },
             ].map((stat) => (
-              <div key={stat.label}>
-                <p className="text-4xl font-black text-orange-400 mb-2">{stat.value}</p>
-                <p className="text-blue-300 text-sm">{stat.label}</p>
+              <div key={stat.label} className="glass-card-dark p-6">
+                <p className="text-3xl sm:text-4xl font-black mb-2" style={{ color: "var(--accent)" }}>{stat.value}</p>
+                <p className="text-slate-300 text-xs sm:text-sm">{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Contact CTA */}
-      <section className="py-20 bg-white">
+      {/* Contact CTA (DARK) */}
+      <section data-theme="dark" className="section-dark py-20">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-brand-navy mb-3">
+            <h2 className="headline-section text-white mb-3">
               Ready to Get Started?
             </h2>
-            <p className="text-gray-600">
+            <p className="text-slate-300 text-sm sm:text-base">
               Contact us today for a free, no-obligation quote. Same-day site visits available.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
-              <a href={PHONE_URL} className="btn-primary">
+              <a href={PHONE_URL} className="btn-primary-dark">
                 📞 Call {BUSINESS.phone}
               </a>
               <a
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-whatsapp"
+                className="btn-secondary-dark"
               >
                 💬 WhatsApp Us
               </a>

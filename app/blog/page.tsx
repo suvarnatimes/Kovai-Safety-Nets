@@ -10,7 +10,6 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/blog/` },
 };
 
-// CMS-ready: In production, replace this with data from a headless CMS (Contentful, Sanity, etc.)
 const BLOG_POSTS = [
   {
     slug: "how-to-choose-the-right-safety-net-for-your-balcony",
@@ -71,76 +70,61 @@ const BLOG_POSTS = [
 export default function BlogIndexPage() {
   return (
     <>
-      {/* Hero */}
-      <section className="gradient-hero text-white py-16 md:py-24">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero (DARK) */}
+      <section data-theme="dark" className="section-dark relative overflow-hidden -mt-24 pt-32 md:pt-40 pb-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <BreadcrumbNav
             items={[
               { label: "Home", href: "/" },
               { label: "Blog", href: "/blog/" },
             ]}
           />
-          <h1 className="text-4xl md:text-5xl font-extrabold mt-6 mb-4">
+          <h1 className="headline-display text-white mt-6 mb-4">
             Safety Net Tips &amp; Resources
           </h1>
-          <p className="text-xl text-blue-100 max-w-2xl">
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl">
             Expert advice on home safety, net types, and local guides for Coimbatore homeowners.
           </p>
         </div>
       </section>
 
-      {/* Blog Grid */}
-      <section className="py-20 bg-white" aria-label="Blog posts">
+      {/* Blog Grid (LIGHT) */}
+      <section data-theme="light" className="section-light py-20" aria-label="Blog posts">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-7 stagger">
             {BLOG_POSTS.map((post) => (
               <article
                 key={post.slug}
-                className="card group flex flex-col"
+                className="glass-card-light group flex flex-col p-6 rounded-[24px]"
               >
-                <div className="bg-gradient-to-br from-brand-blue/10 to-orange-50 h-32 flex items-center justify-center text-5xl">
-                  📰
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="pill-badge-light text-xs" style={{ color: "var(--accent)" }}>{post.category}</span>
+                  <span className="text-xs font-medium text-slate-500">{post.readTime}</span>
                 </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="badge-orange text-xs">{post.category}</span>
-                    <span className="text-xs text-gray-400">{post.readTime}</span>
-                  </div>
-                  <h2 className="text-lg font-bold text-brand-navy mb-2 leading-tight group-hover:text-orange-500 transition-colors">
-                    <Link href={`/blog/${post.slug}/`}>
-                      {post.title}
-                    </Link>
-                  </h2>
-                  <p className="text-gray-600 text-sm leading-relaxed flex-1">{post.excerpt}</p>
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <time className="text-xs text-gray-400" dateTime={post.date}>
-                      {new Date(post.date).toLocaleDateString("en-IN", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
-                    <Link
-                      href={`/blog/${post.slug}/`}
-                      className="text-orange-500 text-sm font-semibold hover:text-orange-600 transition-colors"
-                    >
-                      Read More →
-                    </Link>
-                  </div>
+                <h2 className="text-lg md:text-xl font-bold mb-3 leading-snug tracking-tight hover:text-orange-500 transition-colors" style={{ color: "#14161a" }}>
+                  <Link href={`/blog/${post.slug}/`}>
+                    {post.title}
+                  </Link>
+                </h2>
+                <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">{post.excerpt}</p>
+                <div className="flex items-center justify-between mt-auto pt-4 border-t border-black/5">
+                  <time className="text-xs font-semibold text-slate-500" dateTime={post.date}>
+                    {new Date(post.date).toLocaleDateString("en-IN", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+                  <Link
+                    href={`/blog/${post.slug}/`}
+                    className="text-orange-500 text-xs font-bold hover:text-orange-600 transition-colors"
+                  >
+                    Read Article →
+                  </Link>
                 </div>
               </article>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* CMS note banner */}
-      <section className="py-8 bg-brand-light">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <p className="text-sm text-gray-600">
-            📚 This blog is CMS-ready — connect to Contentful, Sanity, or any headless CMS to manage posts. 
-            <Link href="/contact/" className="text-orange-500 hover:underline ml-1">Contact us</Link> to get started.
-          </p>
         </div>
       </section>
     </>
