@@ -1,0 +1,46 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 360' width='600' height='360'>
+  <defs>
+    <linearGradient id='greenGrad' x1='0%' y1='0%' x2='100%' y2='0%'>
+      <stop offset='0%' stop-color='#66bb6a' />
+      <stop offset='50%' stop-color='#81c784' />
+      <stop offset='100%' stop-color='#4caf50' />
+    </linearGradient>
+    <linearGradient id='trunkGrad' x1='0%' y1='0%' x2='0%' y2='100%'>
+      <stop offset='0%' stop-color='#5d4037' />
+      <stop offset='100%' stop-color='#3e2723' />
+    </linearGradient>
+  </defs>
+
+  <!-- Palm Fronds Top Fan -->
+  <g fill='url(#greenGrad)' stroke='#388e3c' stroke-width='1'>
+    <!-- Center Leaf -->
+    <path d='M300 135 C295 80, 298 30, 300 20 C302 30, 305 80, 300 135 Z' />
+    <!-- Center Left 1 -->
+    <path d='M300 135 C280 85, 260 40, 240 30 C255 50, 275 90, 300 135 Z' />
+    <!-- Center Right 1 -->
+    <path d='M300 135 C320 85, 340 40, 360 30 C345 50, 325 90, 300 135 Z' />
+    <!-- Far Left 1 -->
+    <path d='M300 135 C265 95, 220 60, 180 60 C210 75, 255 105, 300 135 Z' />
+    <!-- Far Right 1 -->
+    <path d='M300 135 C335 95, 380 60, 420 60 C390 75, 345 105, 300 135 Z' />
+    <!-- Outer Left Low -->
+    <path d='M300 135 C250 115, 200 95, 160 115 C195 115, 245 125, 300 135 Z' />
+    <!-- Outer Right Low -->
+    <path d='M300 135 C350 115, 400 95, 440 115 C405 115, 355 125, 300 135 Z' />
+  </g>
+
+  <!-- Trunk -->
+  <path d='M296 110 L304 110 L307 265 L293 265 Z' fill='url(#trunkGrad)' />
+
+  <!-- Top Arc Swoop -->
+  <path d='M 30 165 Q 300 120 570 165 Q 300 142 30 165 Z' fill='url(#greenGrad)' />
+
+  <!-- Bottom Arc Swoop -->
+  <path d='M 30 265 Q 300 310 570 265 Q 300 288 30 265 Z' fill='url(#greenGrad)' />
+
+  <!-- Text KOVAI -->
+  <text x='300' y='212' text-anchor='middle' font-family='Space Grotesk, Inter, Arial, sans-serif' font-weight='900' font-size='68' fill='#7cb342' letter-spacing='14'>KOVAI</text>
+
+  <!-- Text SAFETY NETS -->
+  <text x='300' y='248' text-anchor='middle' font-family='Space Grotesk, Inter, Arial, sans-serif' font-weight='800' font-size='26' fill='#689f38' letter-spacing='10'>SAFETY NETS</text>
+</svg>

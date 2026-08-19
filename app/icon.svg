@@ -1,0 +1,29 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' width='256' height='256'>
+  <rect width='256' height='256' rx='56' fill='#0a0d12' />
+  <g fill='#7cb342' stroke='#388e3c' stroke-width='0.5'>
+    <!-- Center Leaf -->
+    <path d='M128 95 C124 55, 126 20, 128 12 C130 20, 132 55, 128 95 Z' />
+    <!-- Center Left 1 -->
+    <path d='M128 95 C113 58, 98 26, 83 18 C94 32, 109 62, 128 95 Z' />
+    <!-- Center Right 1 -->
+    <path d='M128 95 C143 58, 158 26, 173 18 C162 32, 147 62, 128 95 Z' />
+    <!-- Far Left 1 -->
+    <path d='M128 95 C103 66, 70 41, 41 41 C62 52, 95 74, 128 95 Z' />
+    <!-- Far Right 1 -->
+    <path d='M128 95 C153 66, 186 41, 215 41 C194 52, 161 74, 128 95 Z' />
+    <!-- Outer Left Low -->
+    <path d='M128 95 C92 81, 56 67, 27 81 C52 81, 88 88, 128 95 Z' />
+    <!-- Outer Right Low -->
+    <path d='M128 95 C164 81, 200 67, 229 81 C204 81, 168 88, 128 95 Z' />
+  </g>
+  <!-- Trunk -->
+  <path d='M125 78 L131 78 L133 195 L123 195 Z' fill='#5d4037' />
+  <!-- Top Arc Swoop -->
+  <path d='M 15 116 Q 128 85 241 116 Q 128 100 15 116 Z' fill='#7cb342' />
+  <!-- Bottom Arc Swoop -->
+  <path d='M 15 195 Q 128 226 241 195 Q 128 210 15 195 Z' fill='#7cb342' />
+  <!-- Text KOVAI -->
+  <text x='128' y='152' text-anchor='middle' font-family='Space Grotesk, Arial, sans-serif' font-weight='900' font-size='44' fill='#7cb342' letter-spacing='5'>KOVAI</text>
+  <!-- Text SAFETY NETS -->
+  <text x='128' y='178' text-anchor='middle' font-family='Space Grotesk, Arial, sans-serif' font-weight='800' font-size='16' fill='#689f38' letter-spacing='3'>SAFETY NETS</text>
+</svg>
