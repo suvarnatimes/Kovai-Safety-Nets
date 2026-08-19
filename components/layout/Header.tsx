@@ -117,7 +117,7 @@ export default function Header() {
         <div className="flex items-center gap-2.5">
           <a
             href={PHONE_URL}
-            className="nav-cta-btn inline-flex items-center justify-center gap-1.5 font-semibold rounded-full px-4 py-2 text-xs sm:text-sm shadow-md transition-all duration-300 active:scale-95"
+            className="nav-cta-btn hidden sm:inline-flex items-center justify-center gap-1.5 font-semibold rounded-full px-4 py-2 text-xs sm:text-sm shadow-md transition-all duration-300 active:scale-95"
             aria-label={`Call Kovai Safety Nets at ${BUSINESS.phone}`}
           >
             📞 Get Free Quote
