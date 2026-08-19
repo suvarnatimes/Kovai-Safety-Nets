@@ -28,7 +28,7 @@ async function syncCloudinaryToMongo() {
       const caption = basename
         .replace(/\.[^/.]+$/, "")
         .replace(/[-_]/g, " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase());
+        .replace(/\b\w/g, (l: string) => l.toUpperCase());
 
       // Check if already in MongoDB Atlas
       const existing = await GalleryImage.findOne({ publicId });
