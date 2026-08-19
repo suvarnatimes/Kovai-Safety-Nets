@@ -1,7 +1,13 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { PHONE_URL, WHATSAPP_URL, BUSINESS } from "@/lib/constants";
 
 export default function MobileBottomBar() {
+  const pathname = usePathname();
+
+  if (pathname && pathname.startsWith("/admin")) {
+    return null;
+  }
   return (
     <div
       className="fixed bottom-6 right-4 z-50 flex flex-col items-center gap-3.5"

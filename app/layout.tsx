@@ -6,6 +6,7 @@ import MobileBottomBar from "@/components/layout/MobileBottomBar";
 import JsonLdLocalBusiness from "@/components/seo/JsonLdLocalBusiness";
 import Script from "next/script";
 import { BUSINESS, SITE_URL } from "@/lib/constants";
+import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -88,11 +89,13 @@ export default function RootLayout({
         <meta name="ICBM" content="11.0168, 76.9558" />
       </head>
       <body className="font-sans antialiased bg-[#0a0d12] text-slate-100">
-        <JsonLdLocalBusiness />
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <MobileBottomBar />
+        <Providers>
+          <JsonLdLocalBusiness />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <MobileBottomBar />
+        </Providers>
         {/* Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"

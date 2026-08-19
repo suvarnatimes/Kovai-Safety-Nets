@@ -2,12 +2,18 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { BUSINESS, PHONE_URL, WHATSAPP_URL } from "@/lib/constants";
 import { SERVICES } from "@/lib/services";
 
 export default function Header() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [headerTheme, setHeaderTheme] = useState<"dark" | "light">("dark");
+
+  if (pathname && pathname.startsWith("/admin")) {
+    return null;
+  }
 
   useEffect(() => {
     const sections = document.querySelectorAll("section[data-theme]");

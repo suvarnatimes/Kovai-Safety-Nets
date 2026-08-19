@@ -1,11 +1,18 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { BUSINESS, PHONE_URL } from "@/lib/constants";
 import { SERVICES } from "@/lib/services";
 import { LOCATIONS } from "@/lib/locations";
 
 export default function Footer() {
+  const pathname = usePathname();
   const year = new Date().getFullYear();
+
+  if (pathname && pathname.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <footer className="section-dark py-12 px-4 sm:px-6 lg:px-8" role="contentinfo">

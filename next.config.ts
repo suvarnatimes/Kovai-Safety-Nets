@@ -1,13 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export", // Static HTML export for SSG
   trailingSlash: true,
   images: {
-    unoptimized: true, // Required for static export; use a CDN or Vercel for optimisation
+    unoptimized: true,
     formats: ["image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
-  // Ensure canonical domain; set in deployment environment
 };
 
 export default nextConfig;
