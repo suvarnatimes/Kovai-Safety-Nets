@@ -5,6 +5,7 @@ import { SITE_URL, PHONE_URL, WHATSAPP_URL } from "@/lib/constants";
 import BreadcrumbNav from "@/components/ui/BreadcrumbNav";
 import connectToDatabase from "@/lib/db";
 import GalleryImage from "@/lib/models/GalleryImage";
+import cloudinary from "@/lib/cloudinary";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ export const metadata: Metadata = {
 export default async function GalleryPage() {
   let galleryItems: { id: string; src: string; caption: string }[] = [];
 
+  // Method 1: Query MongoDB Atlas
   try {
     await connectToDatabase();
     const dbImages = await GalleryImage.find({}).sort({ uploadedAt: -1 }).lean();
@@ -30,10 +32,34 @@ export default async function GalleryPage() {
       }));
     }
   } catch (err) {
-    console.error("Gallery DB fetch fallback triggered:", err);
+    console.warn("Gallery MongoDB fetch error/fallback:", err);
   }
 
-  // Fallback to initial service images if DB is empty or unreachable
+  // Method 2: If MongoDB Atlas has no records or fails to connect, query Cloudinary API directly
+  if (galleryItems.length === 0) {
+    try {
+      const cldRes = await cloudinary.api.resources({ max_results: 100 });
+      if (cldRes && cldRes.resources && cldRes.resources.length > 0) {
+        galleryItems = cldRes.resources.map((item: any) => {
+          const basename = item.public_id.split("/").pop() || item.public_id;
+          const cleanCaption = basename
+            .replace(/\.[^/.]+$/, "")
+            .replace(/[-_]/g, " ")
+            .replace(/\b\w/g, (l: string) => l.toUpperCase());
+
+          return {
+            id: item.public_id,
+            src: item.secure_url,
+            caption: cleanCaption || "Safety Net Installation",
+          };
+        });
+      }
+    } catch (cldErr) {
+      console.warn("Direct Cloudinary API fetch error:", cldErr);
+    }
+  }
+
+  // Method 3: Fallback to initial service images if Cloudinary & DB are both empty
   if (galleryItems.length === 0) {
     galleryItems = SERVICES.flatMap((service) =>
       [1, 2, 3].map((n) => ({
@@ -88,7 +114,7 @@ export default async function GalleryPage() {
         </div>
       </section>
 
-      {/* Gallery Grid (LIGHT) */}
+      {/* Gallery Grid (LIGHT) - Dynamic Cloudinary & DB Images */}
       <section data-theme="light" className="section-light py-16" aria-label="Gallery of safety net installations">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
