@@ -19,7 +19,23 @@ export const authOptions: NextAuthOptions = {
 
         await connectToDatabase();
 
-        const admin = await Admin.findOne({ email: credentials.email.toLowerCase().trim() });
+        const inputEmail = credentials.email.toLowerCase().trim();
+        let admin = await Admin.findOne({ email: inputEmail });
+
+        // Auto-seed initial admin if admins collection is empty or if logging in as admin@kovaisafetynets.com for the first time
+        if (!admin) {
+          const totalAdmins = await Admin.countDocuments();
+          if (totalAdmins === 0 || inputEmail === "admin@kovaisafetynets.com") {
+            const defaultPassword = "Admin@Kovai2026";
+            const passwordHash = await bcrypt.hash(defaultPassword, 10);
+            admin = await Admin.create({
+              email: "admin@kovaisafetynets.com",
+              passwordHash,
+              createdAt: new Date(),
+            });
+            console.log("Auto-seeded initial admin user in MongoDB Atlas.");
+          }
+        }
 
         if (!admin) {
           throw new Error("Invalid credentials");
@@ -62,5 +78,5 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "default_secret_for_kovai_safety_nets_2026",
 };
