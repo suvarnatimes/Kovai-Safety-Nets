@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { SERVICES } from "@/lib/services";
 import { SITE_URL, PHONE_URL, WHATSAPP_URL } from "@/lib/constants";
@@ -17,8 +16,33 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
-  await connectToDatabase();
-  const dbImages = await GalleryImage.find({}).sort({ uploadedAt: -1 }).lean();
+  let galleryItems: { id: string; src: string; caption: string }[] = [];
+
+  try {
+    await connectToDatabase();
+    const dbImages = await GalleryImage.find({}).sort({ uploadedAt: -1 }).lean();
+
+    if (dbImages && dbImages.length > 0) {
+      galleryItems = dbImages.map((img: any) => ({
+        id: img._id.toString(),
+        src: img.imageUrl,
+        caption: img.caption || "Safety Net Installation",
+      }));
+    }
+  } catch (err) {
+    console.error("Gallery DB fetch fallback triggered:", err);
+  }
+
+  // Fallback to initial service images if DB is empty or unreachable
+  if (galleryItems.length === 0) {
+    galleryItems = SERVICES.flatMap((service) =>
+      [1, 2, 3].map((n) => ({
+        id: `${service.slug}-${n}`,
+        src: service.image,
+        caption: `${service.title} installation in Coimbatore (Example ${n})`,
+      }))
+    );
+  }
 
   return (
     <>
@@ -64,40 +88,34 @@ export default async function GalleryPage() {
         </div>
       </section>
 
-      {/* Gallery Grid (LIGHT) - Dynamic Cloudinary Images from MongoDB */}
+      {/* Gallery Grid (LIGHT) */}
       <section data-theme="light" className="section-light py-16" aria-label="Gallery of safety net installations">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {dbImages.length === 0 ? (
-            <div className="text-center py-16 text-slate-500 text-base">
-              No gallery images found. Upload photos via the Admin Panel.
-            </div>
-          ) : (
-            <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-              {dbImages.map((item: any) => (
-                <div
-                  key={item._id.toString()}
-                  className="break-inside-avoid rounded-[22px] overflow-hidden shadow-md group relative border border-black/5 bg-slate-100"
-                >
-                  <img
-                    src={item.imageUrl}
-                    alt={item.caption || "Kovai Safety Nets installation photo in Coimbatore"}
-                    loading="lazy"
-                    className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                    <div>
-                      <p className="text-white text-xs font-bold mb-1">
-                        🛡️ {item.caption || "Safety Net Installation"}
-                      </p>
-                      <span className="text-orange-400 text-[11px] font-semibold">
-                        Coimbatore, TN
-                      </span>
-                    </div>
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+            {galleryItems.map((item) => (
+              <div
+                key={item.id}
+                className="break-inside-avoid rounded-[22px] overflow-hidden shadow-md group relative border border-black/5 bg-slate-100"
+              >
+                <img
+                  src={item.src}
+                  alt={item.caption}
+                  loading="lazy"
+                  className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <div>
+                    <p className="text-white text-xs font-bold mb-1">
+                      🛡️ {item.caption}
+                    </p>
+                    <span className="text-orange-400 text-[11px] font-semibold">
+                      Coimbatore, TN
+                    </span>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

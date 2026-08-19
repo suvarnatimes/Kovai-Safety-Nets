@@ -8,30 +8,68 @@ import BlogPost from "@/lib/models/BlogPost";
 
 export const dynamic = "force-dynamic";
 
+const FALLBACK_POSTS: Record<string, { title: string; content: string }> = {
+  "how-to-choose-the-right-safety-net-for-your-balcony": {
+    title: "How to Choose the Right Safety Net for Your Balcony",
+    content: `Choosing the right safety net for your balcony can feel overwhelming with the many options available in the market. In this guide, we break down everything you need to know to make an informed decision.
+
+## Material: HDPE vs. Nylon vs. Polypropylene
+The three most common materials for balcony safety nets are HDPE (high-density polyethylene), nylon (polyamide), and polypropylene (PP). HDPE offers the best balance of UV resistance, strength, and cost — making it our top recommendation for residential balconies in Coimbatore's sunny climate.
+
+## Mesh Size: Matching to Your Purpose
+For child safety nets: 25 mm mesh or smaller. For pet nets (cats): 30 mm mesh. For pigeon exclusion: 20 mm mesh. For general fall protection: 50–100 mm mesh.
+
+## Professional Installation
+Call Kovai Safety Nets at 7708414857 for a free site visit and measurement across Coimbatore.`,
+  },
+  "invisible-grills-vs-safety-nets-which-is-better": {
+    title: "Invisible Grills vs Safety Nets — Which Is Better for Coimbatore Apartments?",
+    content: `A detailed comparison of stainless steel invisible grills and nylon safety nets for balconies in Coimbatore.
+
+## Invisible Grills
+Invisible grills use tensioned stainless steel cables (3 mm, 7x7 strand) run vertically between aluminium top and bottom tracks. They are permanently fixed structures.
+
+## Safety Nets
+Safety nets use nylon or HDPE mesh stretched across the balcony opening. They are softer, removable, and budget-friendly.
+
+Contact Kovai Safety Nets at 7708414857 for a free consultation and measurement.`,
+  },
+};
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  await connectToDatabase();
-  const post = await BlogPost.findOne({ slug, status: "published" }).lean();
-  if (!post) return {};
+  let title = "Safety Net Article | Kovai Safety Nets Blog";
+  let excerpt = "Read safety net tips and advice from Kovai Safety Nets Coimbatore.";
+  let coverImageUrl = undefined;
 
-  const excerpt = post.content.replace(/##\s+/g, "").slice(0, 160) + "...";
+  try {
+    await connectToDatabase();
+    const post = await BlogPost.findOne({ slug, status: "published" }).lean();
+    if (post) {
+      title = `${post.title} | Kovai Safety Nets Blog`;
+      excerpt = post.content.replace(/##\s+/g, "").slice(0, 160) + "...";
+      coverImageUrl = post.coverImageUrl || undefined;
+    }
+  } catch (err) {
+    if (FALLBACK_POSTS[slug]) {
+      title = `${FALLBACK_POSTS[slug].title} | Kovai Safety Nets Blog`;
+    }
+  }
 
   return {
-    title: `${post.title} | Kovai Safety Nets Blog`,
+    title,
     description: excerpt,
     alternates: { canonical: `${SITE_URL}/blog/${slug}/` },
     openGraph: {
       type: "article",
-      title: post.title,
+      title,
       description: excerpt,
       url: `${SITE_URL}/blog/${slug}/`,
-      publishedTime: new Date(post.createdAt).toISOString(),
-      authors: [BUSINESS.name],
-      images: post.coverImageUrl ? [{ url: post.coverImageUrl }] : [],
+      images: coverImageUrl ? [{ url: coverImageUrl }] : [],
     },
   };
 }
@@ -42,39 +80,32 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  await connectToDatabase();
+  let post: any = null;
 
-  const post = await BlogPost.findOne({ slug, status: "published" }).lean();
+  try {
+    await connectToDatabase();
+    post = await BlogPost.findOne({ slug, status: "published" }).lean();
+  } catch (err) {
+    console.error("Blog item DB fetch fallback triggered:", err);
+  }
+
+  if (!post && FALLBACK_POSTS[slug]) {
+    post = {
+      title: FALLBACK_POSTS[slug].title,
+      content: FALLBACK_POSTS[slug].content,
+      createdAt: new Date().toISOString(),
+    };
+  }
 
   if (!post) {
     notFound();
   }
 
-  const date = new Date(post.createdAt).toISOString().split("T")[0];
-  const contentBlocks = post.content.split("\n\n").filter(Boolean);
-
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: post.title,
-    datePublished: date,
-    author: { "@type": "Organization", name: BUSINESS.name },
-    publisher: {
-      "@type": "Organization",
-      name: BUSINESS.name,
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/images/logo.webp` },
-    },
-    url: `${SITE_URL}/blog/${slug}/`,
-    image: post.coverImageUrl || undefined,
-  };
+  const date = post.createdAt ? new Date(post.createdAt).toISOString().split("T")[0] : new Date().toISOString().split("T")[0];
+  const contentBlocks = (post.content || "").split("\n\n").filter(Boolean);
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
-
       {/* Hero (DARK) */}
       <section data-theme="dark" className="section-dark relative overflow-hidden -mt-24 pt-32 md:pt-40 pb-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -98,7 +129,7 @@ export default async function BlogPostPage({
             <span>✍️ {BUSINESS.name} Team</span>
             <span>·</span>
             <time dateTime={date}>
-              {new Date(post.createdAt).toLocaleDateString("en-IN", {
+              {new Date(date).toLocaleDateString("en-IN", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",

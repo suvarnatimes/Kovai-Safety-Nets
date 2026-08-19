@@ -41,44 +41,80 @@ export default function AdminGalleryPage() {
     if (!files || files.length === 0) return;
 
     setUploading(true);
-
     const fileList = Array.from(files);
-    let successCount = 0;
 
     for (let i = 0; i < fileList.length; i++) {
       const file = fileList[i];
-      setUploadProgress(`Uploading image ${i + 1} of ${fileList.length}... (${file.name})`);
+      setUploadProgress(`Uploading ${i + 1} of ${fileList.length}: ${file.name}...`);
 
-      // Check size limit (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert(`Skipping ${file.name}: file size exceeds 5MB limit.`);
+      // File size validation (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`Skipping ${file.name}: File exceeds 10MB size limit.`);
         continue;
       }
 
       try {
-        // Step 1: Upload to Cloudinary
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("folder", "kovai-safety-nets/gallery");
+        let imageUrl = "";
+        let publicId = "";
 
-        const uploadRes = await fetch("/api/admin/upload", {
-          method: "POST",
-          body: formData,
-        });
+        // Attempt Direct Signed Upload to Cloudinary (Bypasses Vercel timeouts & payload limits)
+        try {
+          const sigRes = await fetch("/api/admin/cloudinary-signature?folder=kovai-safety-nets/gallery");
+          if (sigRes.ok) {
+            const sigData = await sigRes.json();
+            const cldFormData = new FormData();
+            cldFormData.append("file", file);
+            cldFormData.append("api_key", sigData.apiKey);
+            cldFormData.append("timestamp", sigData.timestamp);
+            cldFormData.append("signature", sigData.signature);
+            cldFormData.append("folder", sigData.folder);
 
-        const uploadData = await uploadRes.json();
-        if (!uploadRes.ok || !uploadData.success) {
-          alert(`Failed to upload ${file.name}: ${uploadData.error}`);
-          continue;
+            const cldRes = await fetch(
+              `https://api.cloudinary.com/v1_1/${sigData.cloudName}/image/upload`,
+              {
+                method: "POST",
+                body: cldFormData,
+              }
+            );
+
+            if (cldRes.ok) {
+              const cldJson = await cldRes.json();
+              imageUrl = cldJson.secure_url;
+              publicId = cldJson.public_id;
+            }
+          }
+        } catch (cldErr) {
+          console.warn("Direct Cloudinary upload failed, falling back to server route:", cldErr);
         }
 
-        // Step 2: Save metadata to MongoDB
+        // Fallback to Server API upload if direct upload didn't succeed
+        if (!imageUrl || !publicId) {
+          const serverFormData = new FormData();
+          serverFormData.append("file", file);
+          serverFormData.append("folder", "kovai-safety-nets/gallery");
+
+          const serverRes = await fetch("/api/admin/upload", {
+            method: "POST",
+            body: serverFormData,
+          });
+
+          const serverData = await serverRes.json();
+          if (serverRes.ok && serverData.success) {
+            imageUrl = serverData.imageUrl;
+            publicId = serverData.publicId;
+          } else {
+            alert(`Failed to upload ${file.name}: ${serverData.error || "Upload error"}`);
+            continue;
+          }
+        }
+
+        // Save record to MongoDB Atlas
         const dbRes = await fetch("/api/admin/gallery", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            imageUrl: uploadData.imageUrl,
-            publicId: uploadData.publicId,
+            imageUrl,
+            publicId,
             caption: captionInput || file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " "),
           }),
         });
@@ -86,23 +122,22 @@ export default function AdminGalleryPage() {
         if (dbRes.ok) {
           const newDoc = await dbRes.json();
           setImages((prev) => [newDoc, ...prev]);
-          successCount++;
         }
       } catch (err) {
-        console.error("Upload error:", err);
+        console.error("Upload process error:", err);
       }
     }
 
     setUploadProgress("");
     setUploading(false);
     setCaptionInput("");
-    e.target.value = ""; // reset file input
+    e.target.value = "";
   };
 
   const handleDeleteImage = async (id: string, publicId: string) => {
     if (
       !confirm(
-        "Are you sure you want to delete this image? It will be deleted from Cloudinary first, and then removed from MongoDB."
+        "Are you sure you want to delete this image? It will be destroyed from Cloudinary first, and then deleted from MongoDB."
       )
     ) {
       return;
@@ -137,7 +172,7 @@ export default function AdminGalleryPage() {
           Gallery Management
         </h1>
         <p className="text-slate-400 text-sm mt-1">
-          Upload multi-file photo installations directly to Cloudinary storage and sync with MongoDB Atlas.
+          Direct signed multi-photo uploads to Cloudinary storage, synchronized with MongoDB Atlas.
         </p>
       </div>
 
@@ -163,7 +198,7 @@ export default function AdminGalleryPage() {
 
           <div>
             <label className="cursor-pointer py-2.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold text-xs shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 text-center disabled:opacity-50">
-              <span>📷 Select Files (Multi-Upload)</span>
+              <span>📷 Select Photos (Multi-Upload)</span>
               <input
                 type="file"
                 multiple
@@ -194,7 +229,7 @@ export default function AdminGalleryPage() {
             Uploaded Photos ({images.length})
           </h2>
           <span className="text-xs text-slate-400">
-            Click trash button to destroy from Cloudinary & DB
+            Click trash icon to destroy from Cloudinary & DB
           </span>
         </div>
 
@@ -217,7 +252,6 @@ export default function AdminGalleryPage() {
                     alt={img.caption || "Gallery item"}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  {/* Delete Badge Overlay */}
                   <button
                     onClick={() => handleDeleteImage(img._id, img.publicId)}
                     disabled={deletingId === img._id}
