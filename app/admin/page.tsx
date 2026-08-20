@@ -6,15 +6,25 @@ import GalleryImage from "@/lib/models/GalleryImage";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  await connectToDatabase();
+  let totalPosts = 0;
+  let publishedPosts = 0;
+  let draftPosts = 0;
+  let totalImages = 0;
+  let recentPosts: any[] = [];
+  let recentImages: any[] = [];
 
-  const totalPosts = await BlogPost.countDocuments();
-  const publishedPosts = await BlogPost.countDocuments({ status: "published" });
-  const draftPosts = await BlogPost.countDocuments({ status: "draft" });
-  const totalImages = await GalleryImage.countDocuments();
+  try {
+    await connectToDatabase();
+    totalPosts = await BlogPost.countDocuments();
+    publishedPosts = await BlogPost.countDocuments({ status: "published" });
+    draftPosts = await BlogPost.countDocuments({ status: "draft" });
+    totalImages = await GalleryImage.countDocuments();
 
-  const recentPosts = await BlogPost.find({}).sort({ createdAt: -1 }).limit(5);
-  const recentImages = await GalleryImage.find({}).sort({ uploadedAt: -1 }).limit(6);
+    recentPosts = await BlogPost.find({}).sort({ createdAt: -1 }).limit(5).lean();
+    recentImages = await GalleryImage.find({}).sort({ uploadedAt: -1 }).limit(6).lean();
+  } catch (err) {
+    console.warn("Admin dashboard data fetch warning:", err);
+  }
 
   return (
     <div className="space-y-8">
