@@ -5,9 +5,9 @@ import { SITE_URL, PHONE_URL, WHATSAPP_URL } from "@/lib/constants";
 import BreadcrumbNav from "@/components/ui/BreadcrumbNav";
 import connectToDatabase from "@/lib/db";
 import GalleryImage from "@/lib/models/GalleryImage";
-import cloudinary from "@/lib/cloudinary";
+import cloudinary, { optimizeCloudinaryUrl } from "@/lib/cloudinary";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Cache page for 60 seconds (ISR with instant revalidation on update)
 
 export const metadata: Metadata = {
   title: "Safety Nets Gallery – Kovai Safety Nets Coimbatore",
@@ -22,12 +22,15 @@ export default async function GalleryPage() {
   // Method 1: Query MongoDB Atlas
   try {
     await connectToDatabase();
-    const dbImages = await GalleryImage.find({}).sort({ uploadedAt: -1 }).lean();
+    const dbImages = await GalleryImage.find({}, "imageUrl caption uploadedAt")
+      .sort({ uploadedAt: -1 })
+      .limit(100)
+      .lean();
 
     if (dbImages && dbImages.length > 0) {
       galleryItems = dbImages.map((img: any) => ({
         id: img._id.toString(),
-        src: img.imageUrl,
+        src: optimizeCloudinaryUrl(img.imageUrl, { width: 700 }),
         caption: img.caption || "Safety Net Installation",
       }));
     }
@@ -38,7 +41,7 @@ export default async function GalleryPage() {
   // Method 2: If MongoDB Atlas has no records or fails to connect, query Cloudinary API directly
   if (galleryItems.length === 0) {
     try {
-      const cldRes = await cloudinary.api.resources({ max_results: 100 });
+      const cldRes = await cloudinary.api.resources({ max_results: 60 });
       if (cldRes && cldRes.resources && cldRes.resources.length > 0) {
         galleryItems = cldRes.resources.map((item: any) => {
           const basename = item.public_id.split("/").pop() || item.public_id;
@@ -49,7 +52,7 @@ export default async function GalleryPage() {
 
           return {
             id: item.public_id,
-            src: item.secure_url,
+            src: optimizeCloudinaryUrl(item.secure_url, { width: 700 }),
             caption: cleanCaption || "Safety Net Installation",
           };
         });
@@ -127,6 +130,7 @@ export default async function GalleryPage() {
                   src={item.src}
                   alt={item.caption}
                   loading="lazy"
+                  decoding="async"
                   className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">

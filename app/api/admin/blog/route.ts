@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import connectToDatabase from "@/lib/db";
@@ -51,6 +52,14 @@ export async function POST(req: NextRequest) {
       coverImagePublicId: coverImagePublicId || "",
       status: status || "draft",
     });
+
+    try {
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${finalSlug}`);
+      revalidatePath("/");
+    } catch (revErr) {
+      console.warn("Revalidate error:", revErr);
+    }
 
     return NextResponse.json(post, { status: 201 });
   } catch (error: any) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import connectToDatabase from "@/lib/db";
@@ -48,6 +49,8 @@ export async function PUT(
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    const oldSlug = post.slug;
+
     // If a new cover image is uploaded and old cover image existed, delete old image from Cloudinary
     if (coverImagePublicId && post.coverImagePublicId && post.coverImagePublicId !== coverImagePublicId) {
       await deleteFromCloudinary(post.coverImagePublicId);
@@ -71,6 +74,17 @@ export async function PUT(
     if (status) post.status = status;
 
     await post.save();
+
+    try {
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${oldSlug}`);
+      if (finalSlug !== oldSlug) {
+        revalidatePath(`/blog/${finalSlug}`);
+      }
+      revalidatePath("/");
+    } catch (revErr) {
+      console.warn("Revalidate error:", revErr);
+    }
 
     return NextResponse.json(post);
   } catch (error: any) {
@@ -96,12 +110,22 @@ export async function DELETE(
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    const postSlug = post.slug;
+
     // Delete cover image from Cloudinary using stored publicId if present
     if (post.coverImagePublicId) {
       await deleteFromCloudinary(post.coverImagePublicId);
     }
 
     await BlogPost.findByIdAndDelete(id);
+
+    try {
+      revalidatePath("/blog");
+      revalidatePath(`/blog/${postSlug}`);
+      revalidatePath("/");
+    } catch (revErr) {
+      console.warn("Revalidate error:", revErr);
+    }
 
     return NextResponse.json({ success: true, message: "Blog post deleted successfully" });
   } catch (error: any) {

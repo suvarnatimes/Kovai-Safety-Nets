@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import connectToDatabase from "@/lib/db";
@@ -73,8 +74,20 @@ export async function POST(req: NextRequest) {
         caption: caption || "",
         uploadedAt: new Date(),
       });
+      try {
+        revalidatePath("/gallery");
+        revalidatePath("/");
+      } catch (revErr) {
+        console.warn("Revalidate error:", revErr);
+      }
       return NextResponse.json(newImage, { status: 201 });
     } catch (dbErr) {
+      try {
+        revalidatePath("/gallery");
+        revalidatePath("/");
+      } catch (revErr) {
+        console.warn("Revalidate error:", revErr);
+      }
       // Fallback response if MongoDB save fails but Cloudinary upload succeeded
       return NextResponse.json(
         {

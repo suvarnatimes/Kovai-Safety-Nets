@@ -5,8 +5,9 @@ import { SITE_URL, BUSINESS, PHONE_URL, WHATSAPP_URL } from "@/lib/constants";
 import BreadcrumbNav from "@/components/ui/BreadcrumbNav";
 import connectToDatabase from "@/lib/db";
 import BlogPost from "@/lib/models/BlogPost";
+import { optimizeCloudinaryUrl } from "@/lib/cloudinary";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Cache page for 60 seconds (ISR with instant revalidation on update)
 
 const FALLBACK_POSTS: Record<string, { title: string; content: string }> = {
   "how-to-choose-the-right-safety-net-for-your-balcony": {
@@ -34,7 +35,32 @@ Safety nets use nylon or HDPE mesh stretched across the balcony opening. They ar
 
 Contact Kovai Safety Nets at 7708414857 for a free consultation and measurement.`,
   },
+  "monkey-menace-in-coimbatore-how-to-protect-your-home": {
+    title: "Monkey Menace in Coimbatore — How to Protect Your Home Effectively",
+    content: `Hillside areas like Kovaipudur and Vadavalli face increasing monkey intrusion. Here is everything you need to know about humane, effective monkey-proofing solutions.
+
+## Monkey Intrusion
+Monkeys enter through balconies, open utility areas, and open terrace access doors in search of food.
+
+## Heavy Duty Protection
+Heavy-duty HDPE nets provide a safe, effective, and humane barrier.
+
+Contact Kovai Safety Nets at 7708414857 for prompt installation.`,
+  },
 };
+
+export async function generateStaticParams() {
+  try {
+    await connectToDatabase();
+    const posts = await BlogPost.find({ status: "published" }, "slug").lean();
+    if (posts && posts.length > 0) {
+      return posts.map((post: any) => ({ slug: post.slug }));
+    }
+  } catch (err) {
+    console.warn("generateStaticParams blog fetch fallback:", err);
+  }
+  return Object.keys(FALLBACK_POSTS).map((slug) => ({ slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -145,8 +171,9 @@ export default async function BlogPostPage({
           {post.coverImageUrl && (
             <div className="mb-10 rounded-2xl overflow-hidden shadow-lg border border-black/5 bg-slate-100">
               <img
-                src={post.coverImageUrl}
+                src={optimizeCloudinaryUrl(post.coverImageUrl, { width: 1000 })}
                 alt={post.title}
+                decoding="async"
                 className="w-full max-h-[450px] object-cover"
               />
             </div>

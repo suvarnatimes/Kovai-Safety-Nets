@@ -4,8 +4,9 @@ import { SITE_URL } from "@/lib/constants";
 import BreadcrumbNav from "@/components/ui/BreadcrumbNav";
 import connectToDatabase from "@/lib/db";
 import BlogPost from "@/lib/models/BlogPost";
+import { optimizeCloudinaryUrl } from "@/lib/cloudinary";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Cache page for 60 seconds (ISR with instant revalidation on update)
 
 export const metadata: Metadata = {
   title: "Safety Net Tips & Local SEO Blog – Kovai Safety Nets Coimbatore",
@@ -43,7 +44,7 @@ export default async function BlogIndexPage() {
 
   try {
     await connectToDatabase();
-    dbPosts = await BlogPost.find({ status: "published" })
+    dbPosts = await BlogPost.find({ status: "published" }, "title slug content coverImageUrl createdAt")
       .sort({ createdAt: -1 })
       .lean();
   } catch (err) {
@@ -91,8 +92,10 @@ export default async function BlogIndexPage() {
                   {post.coverImageUrl && (
                     <div className="aspect-[16/9] w-full mb-4 rounded-xl overflow-hidden bg-slate-100">
                       <img
-                        src={post.coverImageUrl}
+                        src={optimizeCloudinaryUrl(post.coverImageUrl, { width: 700 })}
                         alt={post.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import connectToDatabase from "@/lib/db";
@@ -39,6 +40,13 @@ export async function DELETE(
 
     // Delete DB document ONLY IF Cloudinary deletion succeeded
     await GalleryImage.findByIdAndDelete(id);
+
+    try {
+      revalidatePath("/gallery");
+      revalidatePath("/");
+    } catch (revErr) {
+      console.warn("Revalidate error:", revErr);
+    }
 
     return NextResponse.json({ success: true, message: "Gallery image deleted successfully" });
   } catch (error: any) {
