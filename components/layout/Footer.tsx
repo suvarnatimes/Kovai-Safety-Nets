@@ -70,6 +70,7 @@ export default function Footer() {
                   <li key={service.slug}>
                     <Link
                       href={`/services/${service.slug}/`}
+                      prefetch={true}
                       className="footer-link text-[13.5px] block transition-colors"
                     >
                       {service.shortTitle}
@@ -92,6 +93,7 @@ export default function Footer() {
                   <li key={loc.slug}>
                     <Link
                       href={`/locations/${loc.slug}/`}
+                      prefetch={true}
                       className="footer-link text-[13.5px] block transition-colors"
                     >
                       {loc.name}
@@ -120,6 +122,7 @@ export default function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
+                      prefetch={true}
                       className="footer-link text-[13.5px] block transition-colors"
                     >
                       {link.label}

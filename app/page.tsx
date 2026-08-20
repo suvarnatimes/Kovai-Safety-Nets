@@ -313,6 +313,7 @@ export default function HomePage() {
                         </a>
                         <Link
                           href={`/services/${service.slug}/`}
+                          prefetch={true}
                           className="inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-800 text-slate-800 hover:text-black font-semibold text-sm py-3 px-6 rounded-full transition-all active:scale-95"
                           aria-label={`Read more about ${service.title}`}
                         >
@@ -499,7 +500,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="text-center mt-12">
-            <Link href="/testimonials/" className="btn-secondary-dark text-xs py-3 px-6">
+            <Link href="/testimonials/" prefetch={true} className="btn-secondary-dark text-xs py-3 px-6">
               Read All Reviews →
             </Link>
           </div>
@@ -521,6 +522,7 @@ export default function HomePage() {
           <div className="flex flex-wrap justify-center gap-2.5">
             <Link
               href="/locations/coimbatore/"
+              prefetch={true}
               className="glass-card-light px-4 py-2 text-xs font-semibold rounded-full hover:border-orange-400 transition-colors"
               style={{ color: "var(--light-text-primary)" }}
             >
@@ -530,6 +532,7 @@ export default function HomePage() {
               <Link
                 key={loc.slug}
                 href={`/locations/${loc.slug}/`}
+                prefetch={true}
                 className="glass-card-light px-4 py-2 text-xs font-semibold rounded-full hover:border-orange-400 transition-colors"
                 style={{ color: "var(--light-text-primary)" }}
               >

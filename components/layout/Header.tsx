@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -15,27 +15,39 @@ export default function Header() {
     return null;
   }
 
+  // Update theme based on visible section
   useEffect(() => {
-    const sections = document.querySelectorAll("section[data-theme]");
-    if (!sections.length) return;
+    let ticking = false;
+    const updateTheme = () => {
+      const sections = document.querySelectorAll("section[data-theme]");
+      if (!sections.length) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const theme = entry.target.getAttribute("data-theme") as "dark" | "light";
-            if (theme) {
-              setHeaderTheme(theme);
-            }
-          }
-        });
-      },
-      { rootMargin: "-70px 0px -85% 0px", threshold: 0 }
-    );
+      const headerOffset = 90; // approx header height + top offset
+      let currentTheme: "dark" | "light" = "dark";
 
-    sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
-  }, []);
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= headerOffset && rect.bottom > headerOffset) {
+          const theme = section.getAttribute("data-theme") as "dark" | "light";
+          if (theme) currentTheme = theme;
+        }
+      });
+
+      setHeaderTheme((prev) => (prev !== currentTheme ? currentTheme : prev));
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateTheme);
+        ticking = true;
+      }
+    };
+
+    updateTheme();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -46,14 +58,28 @@ export default function Header() {
     { href: "/blog/", label: "Blog" },
   ];
 
+  const isLinkActive = useCallback(
+    (href: string) => {
+      if (!pathname) return false;
+      if (href === "/") return pathname === "/";
+      return pathname.startsWith(href);
+    },
+    [pathname]
+  );
+
   return (
     <header className="sticky top-4 z-50 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-3">
       <div
-        className="nav-header-pill rounded-full px-5 py-2.5 flex items-center justify-between"
+        className="nav-header-pill rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300"
         data-theme={headerTheme}
       >
         {/* Logo / Brand */}
-        <Link href="/" className="flex items-center gap-3 shrink-0 group" aria-label="Kovai Safety Nets Home">
+        <Link
+          href="/"
+          prefetch={true}
+          className="flex items-center gap-3 shrink-0 group active:scale-95 transition-transform"
+          aria-label="Kovai Safety Nets Home"
+        >
           <Image
             src="/images/logo-icon.svg"
             alt="Kovai Safety Nets Logo Icon"
@@ -72,48 +98,74 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="nav-link-item px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors duration-300"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isLinkActive(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                prefetch={true}
+                className={`nav-link-item px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-200 active:scale-95 ${
+                  active
+                    ? headerTheme === "dark"
+                      ? "bg-white/15 text-white font-semibold shadow-inner"
+                      : "bg-black/10 text-black font-semibold shadow-inner"
+                    : ""
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
 
           {/* Services dropdown */}
           <div className="relative group">
-            <button className="nav-link-item px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors duration-300 flex items-center gap-1">
+            <button
+              className={`nav-link-item px-3.5 py-1.5 rounded-full text-sm font-medium transition-colors duration-200 flex items-center gap-1 cursor-pointer ${
+                pathname?.startsWith("/services/")
+                  ? headerTheme === "dark"
+                    ? "bg-white/15 text-white font-semibold"
+                    : "bg-black/10 text-black font-semibold"
+                  : ""
+              }`}
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
               Services
               <svg className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
               </svg>
             </button>
             <div
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 z-50 shadow-xl"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 rounded-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 p-2 z-50 shadow-2xl"
               style={{
-                background: headerTheme === "dark" ? "rgba(10, 13, 18, 0.94)" : "rgba(255, 255, 255, 0.94)",
+                background: headerTheme === "dark" ? "rgba(10, 13, 18, 0.96)" : "rgba(255, 255, 255, 0.96)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 border: headerTheme === "dark" ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(20, 24, 20, 0.12)",
               }}
             >
               <div className="grid grid-cols-1 gap-0.5">
-                {SERVICES.map((service) => (
-                  <Link
-                    key={service.slug}
-                    href={`/services/${service.slug}/`}
-                    className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
-                      headerTheme === "dark"
-                        ? "text-slate-300 hover:bg-white/10 hover:text-white"
-                        : "text-slate-700 hover:bg-black/5 hover:text-black"
-                    }`}
-                  >
-                    <span className="text-sm w-5 text-center">{service.icon}</span>
-                    <span>{service.shortTitle}</span>
-                  </Link>
-                ))}
+                {SERVICES.map((service) => {
+                  const isServiceActive = pathname === `/services/${service.slug}/`;
+                  return (
+                    <Link
+                      key={service.slug}
+                      href={`/services/${service.slug}/`}
+                      prefetch={true}
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                        isServiceActive
+                          ? "bg-orange-500/20 text-orange-400 font-semibold"
+                          : headerTheme === "dark"
+                          ? "text-slate-300 hover:bg-white/10 hover:text-white"
+                          : "text-slate-700 hover:bg-black/5 hover:text-black"
+                      }`}
+                    >
+                      <span className="text-sm w-5 text-center">{service.icon}</span>
+                      <span>{service.shortTitle}</span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -132,7 +184,7 @@ export default function Header() {
           {/* Hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-full opacity-80 hover:opacity-100 transition-opacity"
+            className="lg:hidden p-2 rounded-full opacity-80 hover:opacity-100 transition-opacity active:scale-90"
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
             aria-label="Toggle menu"
@@ -152,9 +204,9 @@ export default function Header() {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="lg:hidden mt-2 rounded-2xl p-4 shadow-xl"
+          className="lg:hidden mt-2 rounded-2xl p-4 shadow-2xl animate-fade-up"
           style={{
-            background: headerTheme === "dark" ? "rgba(10, 13, 18, 0.95)" : "rgba(255, 255, 255, 0.95)",
+            background: headerTheme === "dark" ? "rgba(10, 13, 18, 0.97)" : "rgba(255, 255, 255, 0.97)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
             border: headerTheme === "dark" ? "1px solid rgba(255, 255, 255, 0.16)" : "1px solid rgba(20, 24, 20, 0.12)",
@@ -163,38 +215,50 @@ export default function Header() {
           aria-label="Mobile navigation menu"
         >
           <nav className="flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className={`px-4 py-2.5 rounded-xl font-medium transition-colors text-sm ${
-                  headerTheme === "dark"
-                    ? "text-slate-300 hover:bg-white/10 hover:text-white"
-                    : "text-slate-700 hover:bg-black/5 hover:text-black"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isLinkActive(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  prefetch={true}
+                  onClick={() => setMobileOpen(false)}
+                  className={`px-4 py-2.5 rounded-xl font-medium transition-colors text-sm ${
+                    active
+                      ? "bg-orange-500/15 text-orange-500 font-bold"
+                      : headerTheme === "dark"
+                      ? "text-slate-300 hover:bg-white/10 hover:text-white"
+                      : "text-slate-700 hover:bg-black/5 hover:text-black"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <div className="px-4 py-2">
               <p className="text-[10px] font-semibold opacity-50 uppercase tracking-widest mb-2">Services</p>
               <div className="grid grid-cols-2 gap-1">
-                {SERVICES.map((service) => (
-                  <Link
-                    key={service.slug}
-                    href={`/services/${service.slug}/`}
-                    onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs transition-colors ${
-                      headerTheme === "dark"
-                        ? "text-slate-400 hover:bg-white/10 hover:text-white"
-                        : "text-slate-600 hover:bg-black/5 hover:text-black"
-                    }`}
-                  >
-                    <span>{service.icon}</span>
-                    <span className="truncate">{service.shortTitle}</span>
-                  </Link>
-                ))}
+                {SERVICES.map((service) => {
+                  const isServiceActive = pathname === `/services/${service.slug}/`;
+                  return (
+                    <Link
+                      key={service.slug}
+                      href={`/services/${service.slug}/`}
+                      prefetch={true}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs transition-colors ${
+                        isServiceActive
+                          ? "bg-orange-500/20 text-orange-500 font-bold"
+                          : headerTheme === "dark"
+                          ? "text-slate-400 hover:bg-white/10 hover:text-white"
+                          : "text-slate-600 hover:bg-black/5 hover:text-black"
+                      }`}
+                    >
+                      <span>{service.icon}</span>
+                      <span className="truncate">{service.shortTitle}</span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
             <div className="pt-2 flex gap-2">

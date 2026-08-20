@@ -7,6 +7,8 @@ import connectToDatabase from "@/lib/db";
 import GalleryImage from "@/lib/models/GalleryImage";
 import cloudinary, { optimizeCloudinaryUrl } from "@/lib/cloudinary";
 
+import GalleryClient from "@/components/ui/GalleryClient";
+
 export const revalidate = 60; // Cache page for 60 seconds (ISR with instant revalidation on update)
 
 export const metadata: Metadata = {
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryPage() {
-  let galleryItems: { id: string; src: string; caption: string }[] = [];
+  let galleryItems: { id: string; src: string; caption: string; category?: string }[] = [];
 
   // Method 1: Query MongoDB Atlas
   try {
@@ -30,7 +32,7 @@ export default async function GalleryPage() {
     if (dbImages && dbImages.length > 0) {
       galleryItems = dbImages.map((img: any) => ({
         id: img._id.toString(),
-        src: optimizeCloudinaryUrl(img.imageUrl, { width: 700 }),
+        src: img.imageUrl,
         caption: img.caption || "Safety Net Installation",
       }));
     }
@@ -52,7 +54,7 @@ export default async function GalleryPage() {
 
           return {
             id: item.public_id,
-            src: optimizeCloudinaryUrl(item.secure_url, { width: 700 }),
+            src: item.secure_url,
             caption: cleanCaption || "Safety Net Installation",
           };
         });
@@ -69,9 +71,16 @@ export default async function GalleryPage() {
         id: `${service.slug}-${n}`,
         src: service.image,
         caption: `${service.title} installation in Coimbatore (Example ${n})`,
+        category: service.slug,
       }))
     );
   }
+
+  const serviceCategories = SERVICES.map((s) => ({
+    slug: s.slug,
+    shortTitle: s.shortTitle,
+    icon: s.icon,
+  }));
 
   return (
     <>
@@ -93,61 +102,8 @@ export default async function GalleryPage() {
         </div>
       </section>
 
-      {/* Filter Buttons (LIGHT) */}
-      <section data-theme="light" className="section-light py-8 border-b border-black/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-xs font-bold uppercase text-slate-500 mr-2 tracking-wider">Filter by:</span>
-            <Link
-              href="/gallery/"
-              className="pill-badge-dark text-xs"
-            >
-              All Services
-            </Link>
-            {SERVICES.map((service) => (
-              <Link
-                key={service.slug}
-                href={`/services/${service.slug}/`}
-                className="pill-badge-light text-xs hover:border-slate-800 transition-colors"
-              >
-                {service.icon} {service.shortTitle}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Grid (LIGHT) - Dynamic Cloudinary & DB Images */}
-      <section data-theme="light" className="section-light py-16" aria-label="Gallery of safety net installations">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-            {galleryItems.map((item) => (
-              <div
-                key={item.id}
-                className="break-inside-avoid rounded-[22px] overflow-hidden shadow-md group relative border border-black/5 bg-slate-100"
-              >
-                <img
-                  src={item.src}
-                  alt={item.caption}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <div>
-                    <p className="text-white text-xs font-bold mb-1">
-                      🛡️ {item.caption}
-                    </p>
-                    <span className="text-orange-400 text-[11px] font-semibold">
-                      Coimbatore, TN
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Interactive Gallery with Instant Filters, Batch Loading, and Lightbox */}
+      <GalleryClient items={galleryItems} services={serviceCategories} />
 
       {/* CTA (DARK) */}
       <section data-theme="dark" className="section-dark py-16 text-center">

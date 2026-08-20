@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface BreadcrumbItem {
   label: string;
   href: string;
@@ -27,24 +29,25 @@ export default function BreadcrumbNav({ items }: BreadcrumbProps) {
       />
       <nav
         aria-label="Breadcrumb"
-        className="text-sm text-gray-500 flex flex-wrap items-center gap-1"
+        className="text-sm text-gray-400 flex flex-wrap items-center gap-1"
       >
         {items.map((item, index) => (
           <span key={item.href} className="flex items-center gap-1">
             {index < items.length - 1 ? (
               <>
-                <a
+                <Link
                   href={item.href}
-                  className="hover:text-orange-500 transition-colors"
+                  prefetch={true}
+                  className="hover:text-orange-400 transition-colors text-slate-300"
                 >
                   {item.label}
-                </a>
-                <span aria-hidden="true" className="text-gray-300">
+                </Link>
+                <span aria-hidden="true" className="text-slate-500">
                   /
                 </span>
               </>
             ) : (
-              <span className="text-gray-700 font-medium" aria-current="page">
+              <span className="text-slate-200 font-medium" aria-current="page">
                 {item.label}
               </span>
             )}
